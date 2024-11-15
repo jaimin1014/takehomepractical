@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Services\ImportStatService;
+use Illuminate\Support\Facades\Storage;
 
 class ImportStatsCommand extends Command
 {
@@ -20,11 +22,32 @@ class ImportStatsCommand extends Command
      */
     protected $description = 'Import stats from CSV files';
 
+    public function __construct(ImportStatService $importStatService)
+    {
+        parent::__construct();
+        $this->importStatService = $importStatService;
+    }
+
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        // @TODO implement
+        $filename = $this->argument('filename');
+        $path = storage_path($filename);
+
+        if (!file_exists($path)) {
+            $this->error("File not found: $filename");
+            return 1;
+        }
+
+        $data = array_map('str_getcsv', file($path));
+        $headers = array_shift($data);
+        $csvData = array_map(fn($row) => array_combine($headers, $row), $data);
+
+        $this->importStatService->importStats($csvData);
+
+        $this->info('Stats imported successfully!');
+        return 0;
     }
 }

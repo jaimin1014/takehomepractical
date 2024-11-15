@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Campaign extends Model
+class Term extends Model
 {
     use HasFactory;
 
@@ -14,7 +14,7 @@ class Campaign extends Model
      *
      * @var array
      */
-    protected $fillable = ['utm_campaign', 'name'];
+    protected $fillable = ['utm_term'];
 
     /**
      * Get stats relationships.
